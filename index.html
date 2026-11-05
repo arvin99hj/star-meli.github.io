@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reflections — Constellation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot"></span> CONSTELLATION <span class="muted">/ REFLECTIONS</span></div>
+      <div class="top-actions">
+        <button id="syncToggle" class="quiet-button">TAP-SYNC</button>
+        <button id="editorToggle" class="quiet-button">TIMING EDITOR</button>
+      </div>
+    </header>
+
+    <section class="stage" aria-label="Sternenkonstellation">
+      <canvas id="sky"></canvas>
+      <div class="intro" id="intro">
+        <div class="eyebrow">A SONG, WRITTEN IN STARS</div>
+        <h1>Somewhere<br><em>in the stars.</em></h1>
+        <p>Press play and watch the words become a constellation.</p>
+      </div>
+      <div class="current-word" id="currentWord" aria-live="polite"></div>
+      <div class="stage-bottom">
+        <span id="elapsed">00:00</span>
+        <span class="track-name">THE NEIGHBOURHOOD — REFLECTIONS</span>
+        <span id="duration">00:00</span>
+      </div>
+    </section>
+
+    <section class="player">
+      <button id="playButton" class="play-button" aria-label="Abspielen"><span id="playIcon">▶</span></button>
+      <div class="track-info">
+        <div class="track-title">Reflections</div>
+        <div class="track-subtitle">The Neighbourhood</div>
+        <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Wiedergabeposition">
+      </div>
+      <button id="restartButton" class="quiet-button">RESTART</button>
+    </section>
+
+    <section id="tapSync" class="tapsync hidden">
+      <div class="editor-heading">
+        <div>
+          <div class="eyebrow">EXAKTE ZEITSTEMPEL</div>
+          <h2>Tap-Sync</h2>
+          <p>Starte das Lied und tippe genau in dem Moment, in dem das hervorgehobene Wort gesungen wird. Tastatur: <b>Leertaste</b> = Wort, <b>Backspace</b> = Rückgängig, <b>←</b> = 3 s zurück, <b>Enter</b> = Play/Pause.</p>
+        </div>
+        <button id="closeSync" class="quiet-button">CLOSE</button>
+      </div>
+
+      <div class="sync-stage">
+        <div id="syncPrev" class="sync-prev"></div>
+        <div id="syncCurrent" class="sync-current"></div>
+        <div id="syncNext" class="sync-next"></div>
+      </div>
+      <div class="sync-meta"><span id="syncCount"></span><span id="syncTime">0.00 s</span></div>
+
+      <button id="tapButton" class="tap-button">TAP — DAS WORT BEGINNT JETZT</button>
+
+      <div class="sync-controls">
+        <button id="syncPlay" class="quiet-button">▶ PLAY</button>
+        <button id="syncBack" class="quiet-button">← 3 S</button>
+        <button id="syncUndo" class="quiet-button">RÜCKGÄNGIG</button>
+        <label class="sync-field">Tempo
+          <select id="syncSpeed"><option value="0.5">0.5×</option><option value="0.75" selected>0.75×</option><option value="1">1×</option></select>
+        </label>
+        <label class="sync-field">Reaktions-Korrektur (ms)
+          <input id="syncOffset" type="number" min="0" max="500" step="10" value="100">
+        </label>
+      </div>
+
+      <div class="editor-actions">
+        <button id="syncApply" class="add-button">ÜBERNEHMEN (AUF WEBSITE ANWENDEN)</button>
+        <button id="syncExport" class="quiet-button">EXPORT JSON</button>
+        <button id="syncReset" class="quiet-button danger">NEU STARTEN</button>
+        <span id="syncStatus" class="sync-status"></span>
+      </div>
+
+      <div id="syncList" class="sync-list"></div>
+      <p class="editor-note">Tipp: Mit 0.75× Tempo triffst du leichter. Die Reaktions-Korrektur zieht deine Reaktionszeit von jedem Tap ab. Falls du dauernd zu spät tippst, erhöhe sie. Ein Klick auf ein Wort in der Liste springt dorthin, damit du Stellen neu takten kannst. Dein Fortschritt wird automatisch im Browser gespeichert.</p>
+    </section>
+
+    <section id="editor" class="editor hidden">
+      <div class="editor-heading">
+        <div>
+          <div class="eyebrow">MAKE THE CONSTELLATION YOURS</div>
+          <h2>Word timing editor</h2>
+          <p>Add each word at the exact moment it is sung. The special word can glow brighter.</p>
+        </div>
+        <button id="closeEditor" class="quiet-button">CLOSE</button>
+      </div>
+      <div class="editor-controls">
+        <label>Word
+          <input id="wordInput" type="text" maxlength="32" placeholder="e.g. I">
+        </label>
+        <label>Time (seconds)
+          <input id="timeInput" type="number" min="0" step="0.01" placeholder="Use current time">
+        </label>
+        <label class="check-label"><input id="highlightInput" type="checkbox"> Highlight this word</label>
+        <button id="addWord" class="add-button">ADD WORD AT CURRENT TIME</button>
+      </div>
+      <div class="editor-actions">
+        <button id="exportJson" class="quiet-button">EXPORT TIMINGS JSON</button>
+        <label class="import-button">IMPORT TIMINGS JSON<input id="importJson" type="file" accept="application/json"></label>
+        <button id="clearWords" class="quiet-button danger">CLEAR ALL</button>
+      </div>
+      <div class="word-list-wrap">
+        <div class="list-head"><span>TIME</span><span>WORD</span><span>TYPE</span><span></span></div>
+        <div id="wordList" class="word-list"></div>
+      </div>
+      <p class="editor-note">Tip: Play the song, pause at the start of a word, then add it. Fine-tune the timestamp in the list if needed. Your timings are saved in this browser automatically.</p>
+    </section>
+    <footer>MADE OF MOMENTS · MADE OF STARS</footer>
+  </main>
+  <audio id="audio" src="assets/reflections.mp3" preload="metadata"></audio>
+  <script src="lyrics-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

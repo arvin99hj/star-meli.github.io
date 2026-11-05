@@ -1,0 +1,11 @@
+{
+  "title": "Reflections — Constellation",
+  "artist": "The Neighbourhood",
+  "audio": "assets/reflections.mp3",
+  "lyrics": "lyrics-data.js",
+  "timingSource": "Estimated word timestamps; adjust in the Timing Editor to match your audio file.",
+  "specialHighlights": [
+    "eyes"
+  ],
+  "version": "1.1.0"
+}
